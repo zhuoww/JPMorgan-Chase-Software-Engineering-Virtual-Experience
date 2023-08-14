@@ -1,0 +1,91 @@
+From 95b88ac764676d8e7dd09234a7ab0bf49fbda8ae Mon Sep 17 00:00:00 2001
+From: zhuoww <zhuoww1008@gmail.com>
+Date: Sun, 13 Aug 2023 22:56:33 -0700
+Subject: [PATCH 1/2] v1
+
+---
+ .vscode/settings.json |  6 ++++++
+ client3.py            | 15 ++++++++++-----
+ 2 files changed, 16 insertions(+), 5 deletions(-)
+ create mode 100644 .vscode/settings.json
+
+diff --git a/.vscode/settings.json b/.vscode/settings.json
+new file mode 100644
+index 0000000..5c80254
+--- /dev/null
++++ b/.vscode/settings.json
+@@ -0,0 +1,6 @@
++{
++  "[python]": {
++    "editor.defaultFormatter": "ms-python.autopep8"
++  },
++  "python.formatting.provider": "none"
++}
+diff --git a/client3.py b/client3.py
+index 3fc09b7..dc1dceb 100644
+--- a/client3.py
++++ b/client3.py
+@@ -35,25 +35,30 @@ def getDataPoint(quote):
+     stock = quote['stock']
+     bid_price = float(quote['top_bid']['price'])
+     ask_price = float(quote['top_ask']['price'])
+-    price = bid_price
++    price = (bid_price + ask_price)/2
+     return stock, bid_price, ask_price, price
+ 
+ 
+ def getRatio(price_a, price_b):
+     """ Get ratio of price_a and price_b """
+     """ ------------- Update this function ------------- """
+-    return 1
++    if (price_b == 0):
++        return
++    return price_a/price_b
+ 
+ 
+ # Main
+ if __name__ == "__main__":
+     # Query the price once every N seconds.
+     for _ in iter(range(N)):
+-        quotes = json.loads(urllib.request.urlopen(QUERY.format(random.random())).read())
++        quotes = json.loads(urllib.request.urlopen(
++            QUERY.format(random.random())).read())
+ 
+         """ ----------- Update to get the ratio --------------- """
++        prices = {}
+         for quote in quotes:
+             stock, bid_price, ask_price, price = getDataPoint(quote)
+-            print("Quoted %s at (bid:%s, ask:%s, price:%s)" % (stock, bid_price, ask_price, price))
++            print("Quoted %s at (bid:%s, ask:%s, price:%s)" %
++                  (stock, bid_price, ask_price, price))
+ 
+-        print("Ratio %s" % getRatio(price, price))
++        print("Ratio %s" % getRatio(prices["ABC"], prices["DEF"]))
+-- 
+2.40.1
+
+
+From 2ffdb22ec579c8c916b8fcee2dbdc9305f1549e3 Mon Sep 17 00:00:00 2001
+From: zhuoww <zhuoww1008@gmail.com>
+Date: Sun, 13 Aug 2023 23:14:15 -0700
+Subject: [PATCH 2/2] v1
+
+---
+ client3.py | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/client3.py b/client3.py
+index dc1dceb..c432350 100644
+--- a/client3.py
++++ b/client3.py
+@@ -58,6 +58,7 @@ if __name__ == "__main__":
+         prices = {}
+         for quote in quotes:
+             stock, bid_price, ask_price, price = getDataPoint(quote)
++            prices[stock] = price
+             print("Quoted %s at (bid:%s, ask:%s, price:%s)" %
+                   (stock, bid_price, ask_price, price))
+ 
+-- 
+2.40.1
+
